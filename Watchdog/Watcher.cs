@@ -33,7 +33,7 @@ namespace Watchdog
             }
             else
             {
-                for (int livetime = 1; livetime < 1200; livetime++)
+                for (int livetime = 1; livetime < 600; livetime++)
                 {
                     curTime = DateTime.Now;
                     curTotalProcessorTime = p.TotalProcessorTime;
