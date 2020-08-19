@@ -58,7 +58,7 @@ namespace Watchdog
             while (!Console.KeyAvailable)
             {
                 Process[] pp = Process.GetProcessesByName(processName);
-                if (pp.Length == 0 && !respawn && Program.fullPathExecutable == null)
+                if (pp.Length == 0 && !respawn)
                 {
                     Console.WriteLine(processName + " does not exist");
                     System.Environment.Exit(1);
@@ -67,6 +67,7 @@ namespace Watchdog
                 if(respawn && Program.fullPathExecutable != null)
                 {
                     Respawn();
+                    pp = Process.GetProcessesByName(processName);
                 }
 
                 Program.fullPathExecutable = pp[0].MainModule.FileName;
@@ -75,7 +76,7 @@ namespace Watchdog
                     Watcher watchdog = new Watcher(proc, maxCPUAverageUsage);
                     new Thread(new ThreadStart(watchdog.Watch)).Start();
                 }
-                Thread.Sleep(1000 * 60 * 20);
+                Thread.Sleep(1000 * 60 * 10);
             }
         }
 
