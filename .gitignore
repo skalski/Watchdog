@@ -1,0 +1,9 @@
+
+.vs/Watchdog/v15/.suo
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
+Watchdog/bin/Debug/Watchdog.exe.config
+Watchdog/bin/Debug/Watchdog.pdb
+Watchdog/obj/Debug/*
