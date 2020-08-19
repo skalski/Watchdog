@@ -8,14 +8,17 @@ namespace Watchdog
 {
     class Program
     {
+        private static string fullPathExecutable;
         static void Main(string[] args)
         {
             bool show_help = false;
+            bool respawn = false;
             int maxCPUAverageUsage = 90;
             string processName = "";
 
             var p = new OptionSet() {
                 { "n|name=", "the name of the Process you want to watch.", v => processName = v },
+                { "r|respawn", "if Process is died, should we respawn the mother process (be carefull if you watch a child process)?", v => respawn= v != null },
                 { "c|cpu=", "the number of maximal CPU usage in average for next 10 Minutes. this must be an integer.", (int v) => maxCPUAverageUsage = v },
                 { "h|help",  "show this message and exit", v => show_help = v != null },
             };
@@ -37,7 +40,7 @@ namespace Watchdog
                 ShowHelp(p);
                 return;
             }
-            RunWatcher(processName, maxCPUAverageUsage);
+            RunWatcher(processName, maxCPUAverageUsage, respawn);
         }
 
         static void ShowHelp(OptionSet p)
@@ -50,26 +53,35 @@ namespace Watchdog
             p.WriteOptionDescriptions(Console.Out);
         }
     
-        static void RunWatcher(String processName, int maxCPUAverageUsage)
+        static void RunWatcher(String processName, int maxCPUAverageUsage, bool respawn)
         {
             while (!Console.KeyAvailable)
             {
                 Process[] pp = Process.GetProcessesByName(processName);
-                if (pp.Length == 0)
+                if (pp.Length == 0 && !respawn && Program.fullPathExecutable == null)
                 {
                     Console.WriteLine(processName + " does not exist");
                     System.Environment.Exit(1);
                 }
-                else
+
+                if(respawn && Program.fullPathExecutable != null)
                 {
-                    foreach (Process proc in pp)
-                    {
-                        Watcher watchdog = new Watcher(proc, maxCPUAverageUsage);
-                        watchdog.Watch();
-                    }
-                    Thread.Sleep(1000 * 60 * 20);
+                    Respawn();
                 }
+
+                Program.fullPathExecutable = pp[0].MainModule.FileName;
+                foreach (Process proc in pp)
+                {
+                    Watcher watchdog = new Watcher(proc, maxCPUAverageUsage);
+                    new Thread(new ThreadStart(watchdog.Watch)).Start();
+                }
+                Thread.Sleep(1000 * 60 * 20);
             }
+        }
+
+        static void Respawn()
+        {
+            Process.Start(Program.fullPathExecutable);
         }
     }
 }
