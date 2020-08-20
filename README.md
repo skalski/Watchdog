@@ -18,14 +18,17 @@
  Example:
 
  ```watchdog -n outlook -c 90 -t 10```
+ 
  This will watch a Process named "outlook" - if the average CPU Load goes over 90% within 10 Minutes, watchdog will shutdown the application.
 
  Example:
  ```watchdog -n outlook -c 90 -t 5 -r```
+ 
  This will watch a Process named "outlook" - if the average CPU Load goes over 90% within 10 Minutes, watchdog will shutdown the application and restart it again.
 
  Example:
  ```watchdog -n outlook -t 5 -r```
+ 
  This will watch a Process named "outlook", watchdog will shutdown the application and restart it again after 5 Minutes if the Process isn't available anymore.
 
 
