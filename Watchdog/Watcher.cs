@@ -15,11 +15,13 @@ namespace Watchdog
         private static TimeSpan curTotalProcessorTime;
         private Process p;
         private int maxCPUAverageUsage;
+        private int timeLimit;
 
-        public Watcher(Process p, int maxCPUAverageUsage)
+        public Watcher(Process p, int maxCPUAverageUsage, int timeLimit)
         {
             this.p = p;
             this.maxCPUAverageUsage = maxCPUAverageUsage;
+            this.timeLimit = timeLimit;
         }
 
         public void Watch()
@@ -33,7 +35,7 @@ namespace Watchdog
             }
             else
             {
-                for (int livetime = 1; livetime < 600; livetime++)
+                for (int livetime = 1; livetime < timeLimit * 60; livetime++)
                 {
                     curTime = DateTime.Now;
                     curTotalProcessorTime = p.TotalProcessorTime;

@@ -7,3 +7,5 @@
 Watchdog/bin/Debug/Watchdog.exe.config
 Watchdog/bin/Debug/Watchdog.pdb
 Watchdog/obj/Debug/*
+.vs/ProjectSettings.json
+.vs/slnx.sqlite

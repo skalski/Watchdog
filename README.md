@@ -1,21 +1,31 @@
 # Watchdog
- Deamon to watch and quit raging tasks on Windows
+ Deamon to watch, restart and quit raging tasks on Windows
  
- I got problems with 3rd Party Software that locks my CPU randomly.
- So i decided to use this little tool.
+ ## Why
+ I got problems with 3rd Party Software that locks my CPU randomly. The Vendor of this software wasn't able to solve this issue.
+ So i decided to create this little tool. And well, it makes my life easier.
  
- This tools works also with multiple threads with the same name.
+ ## What
+ This Tools works also with multiple threads with the same processname as well as single processes.
  Each thread will be watched by its own thread.
  
- Its written in C# for Windows (not sure if it can be proted to *nix)
+ Its written in C# with .net for Windows (not sure if it can run on *nix with mono)
  
  Usage:
  watchdog --help    <- for help
  
- Example;
- watchdog -n outlook -c 90
- 
- This means every process named "outlook" will be watched. If the average CPU usage hits 90% in a timeframe of 10 minutes,
-the task will be killed.
+ Example:
+ watchdog -n outlook -c 90 -t 10
+ This will watch a Process named "outlook" - if the average CPU Load goes over 90% within 10 Minutes, watchdog will shutdown the application.
 
+ Example:
+ watchdog -n outlook -c 90 -t 5 -r
+ This will watch a Process named "outlook" - if the average CPU Load goes over 90% within 10 Minutes, watchdog will shutdown the application and restart it again.
+
+ Example:
+ watchdog -n outlook -t 5 -r
+ This will watch a Process named "outlook", watchdog will shutdown the application and restart it again after 5 Minutes if the Process isn't available anymore.
+
+
+Feel free to contribute or open an issue here in Github.
 Cheers :-) 

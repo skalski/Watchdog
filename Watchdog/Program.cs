@@ -13,13 +13,15 @@ namespace Watchdog
         {
             bool show_help = false;
             bool respawn = false;
-            int maxCPUAverageUsage = 90;
+            int maxCPUAverageUsage = 0;
+            int timeLimit = 10;
             string processName = "";
 
             var p = new OptionSet() {
                 { "n|name=", "the name of the Process you want to watch.", v => processName = v },
                 { "r|respawn", "if Process is died, should we respawn the mother process (be carefull if you watch a child process)?", v => respawn= v != null },
-                { "c|cpu=", "the number of maximal CPU usage in average for next 10 Minutes. this must be an integer.", (int v) => maxCPUAverageUsage = v },
+                { "c|cpu=", "the number of maximal CPU usage in average for next 10 Minutes. If 0 then only respawn of processes will used. this must be an integer.", (int v) => maxCPUAverageUsage = v },
+                { "t|time=", "the number of minutes that should used for respawn or CPU average usage calcumaltion. this must be an integer.", (int v) => timeLimit = v },
                 { "h|help",  "show this message and exit", v => show_help = v != null },
             };
 
@@ -40,7 +42,7 @@ namespace Watchdog
                 ShowHelp(p);
                 return;
             }
-            RunWatcher(processName, maxCPUAverageUsage, respawn);
+            RunWatcher(processName, maxCPUAverageUsage, timeLimit, respawn);
         }
 
         static void ShowHelp(OptionSet p)
@@ -53,7 +55,7 @@ namespace Watchdog
             p.WriteOptionDescriptions(Console.Out);
         }
     
-        static void RunWatcher(String processName, int maxCPUAverageUsage, bool respawn)
+        static void RunWatcher(String processName, int maxCPUAverageUsage, int timeLimit, bool respawn)
         {
             while (!Console.KeyAvailable)
             {
@@ -71,12 +73,15 @@ namespace Watchdog
                 }
 
                 Program.fullPathExecutable = pp[0].MainModule.FileName;
-                foreach (Process proc in pp)
+                if(maxCPUAverageUsage >= 1)
                 {
-                    Watcher watchdog = new Watcher(proc, maxCPUAverageUsage);
-                    new Thread(new ThreadStart(watchdog.Watch)).Start();
+                    foreach (Process proc in pp)
+                    {
+                        Watcher watchdog = new Watcher(proc, maxCPUAverageUsage, timeLimit);
+                        new Thread(new ThreadStart(watchdog.Watch)).Start();
+                    }
                 }
-                Thread.Sleep(1000 * 60 * 10);
+                Thread.Sleep(1000 * 60 * timeLimit);
             }
         }
 
