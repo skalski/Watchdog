@@ -43,12 +43,12 @@ namespace Watchdog
                     double CPUUsage = (curTotalProcessorTime.TotalMilliseconds - lastTotalProcessorTime.TotalMilliseconds) / curTime.Subtract(lastTime).TotalMilliseconds / Convert.ToDouble(Environment.ProcessorCount);
                     processorCollection.Add(CPUUsage * 100);
                     average = processorCollection.Average();
-                    if (average >= maxCPUAverageUsage && processorCollection.Count >= 1000)
+                    if (average >= maxCPUAverageUsage && processorCollection.Count >= timelimit - 60)
                     {
                         p.Kill();
                         Console.WriteLine("Kill Processes - cause of high load");
                     }
-                    if (processorCollection.Count >= 1000)
+                    if (processorCollection.Count >= timelimit - 60)
                     {
                         processorCollection.Clear();
                     }
